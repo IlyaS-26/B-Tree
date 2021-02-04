@@ -1,6 +1,6 @@
 public class Main {
     public static void main(String[] args) {
-        Tree tree = new Tree(3);
+        Tree tree = new Tree(4);
         //for (int i = 0; i <= 35; i++) {
         //  tree.insert(i);
         //}
@@ -32,9 +32,9 @@ public class Main {
         tree.insert(666);
         tree.insert(777);
         tree.insert(376);
-        tree.insert(375);
-        tree.insert(537);
-        tree.insert(538);
+        tree.insert(616);
+        tree.insert(717);
+        tree.insert(316);
         tree.Show();
     }
 }
