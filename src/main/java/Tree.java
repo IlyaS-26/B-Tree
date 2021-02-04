@@ -23,17 +23,7 @@ public class Tree {
 
     public void insert(int k) {
         Node r = root;
-        if ((r.n == T)) {
-            Node s = new Node();
-            root = s;
-            s.isLeaf = false;
-            s.n = 0;
-            s.children[0] = r;
-            split(s, 0, r);
-            insertValue(s, k);
-        } else {
-            insertValue(r, k);
-        }
+        insertValue(r, k);
     }
 
     private void insertValue(Node x, int k) { // x - нод, k - новый ключ
@@ -45,17 +35,23 @@ public class Tree {
             }
             x.keys[i] = k;
             x.n++;
-        } else {
+        } else { //если не лист
             while ((i >= 1) && (k < x.keys[i - 1])) {
                 i--;
             }
+            insertValue(x.children[i], k);
             if (x.children[i].n == T) {
                 split(x, i, x.children[i]);
-                if (k > x.keys[i]) {
-                    i++;
-                }
             }
-            insertValue(x.children[i], k);
+        }
+        if (this.root.n == T) {
+            Node r = root;
+            Node s = new Node();
+            root = s;
+            s.isLeaf = false;
+            s.n = 0;
+            s.children[0] = r;
+            split(s, 0, r);
         }
     }
 
