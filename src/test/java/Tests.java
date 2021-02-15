@@ -111,47 +111,11 @@ public class Tests {
         int[] node16 = {909, 1001, 0, 0, 0};
         int[] node17 = {1003, 1004, 0, 0, 0};
         Tree tree = new Tree(5);
-        tree.insert(4);
-        tree.insert(11);
-        tree.insert(10);
-        tree.insert(2);
-        tree.insert(5);
-        tree.insert(6);
-        tree.insert(3);
-        tree.insert(98);
-        tree.insert(55);
-        tree.insert(34);
-        tree.insert(7);
-        tree.insert(1);
-        tree.insert(8);
-        tree.insert(9);
-        tree.insert(0);
-        tree.insert(42);
-        tree.insert(88);
-        tree.insert(101);
-        tree.insert(102);
-        tree.insert(59);
-        tree.insert(103);
-        tree.insert(33);
-        tree.insert(56);
-        tree.insert(65);
-        tree.insert(808);
-        tree.insert(666);
-        tree.insert(777);
-        tree.insert(66);
-        tree.insert(67);
-        tree.insert(12);
-        tree.insert(14);
-        tree.insert(16);
-        tree.insert(17);
-        tree.insert(19);
-        tree.insert(68);
-        tree.insert(909);
-        tree.insert(1001);
-        tree.insert(1002);
-        tree.insert(1003);
-        tree.insert(1004);
-        tree.insert(69);
+        int[] array = {4, 11, 10, 2, 5, 6, 3, 98, 55, 34, 7, 1, 8, 9, 0, 42, 88, 101, 102, 59, 103, 33, 56, 65,
+                808, 666, 777, 66, 67, 12, 14, 16, 17, 19, 68, 909, 1001, 1002, 1003, 1004, 69};
+        for (int number : array) {
+            tree.insert(number);
+        }
         Tree.Node root = tree.getRoot();
         assertArrayEquals(root.keys, nodeRoot);
         // 0 ветвь
@@ -310,5 +274,109 @@ public class Tests {
         assertArrayEquals(root.children[1].children[1].children[0].keys, node12);
         assertArrayEquals(root.children[1].children[1].children[1].keys, node13);
         assertArrayEquals(root.children[1].children[1].children[2].keys, node14);
+    }
+
+    @Test
+    public void testRemove1() {
+        Tree tree = new Tree(3);
+        int[] nodeRoot = {9, 0, 0};
+        int[] node0 = {6, 0, 0};
+        int[] node1 = {13, 40, 0};
+        int[] node2 = {2, 0, 0};
+        int[] node3 = {8, 0, 0};
+        int[] node4 = {12, 0, 0};
+        int[] node5 = {25, 0, 0};
+        int[] node6 = {50, 0, 0};
+        tree.insert(2);
+        tree.insert(6);
+        tree.insert(8);
+        tree.insert(9);
+        tree.insert(13);
+        tree.insert(25);
+        tree.insert(30);
+        tree.insert(40);
+        tree.insert(50);
+        tree.insert(60);
+        tree.insert(31);
+        tree.insert(12);
+        tree.removeFromNode(31,tree.getRoot());
+        tree.removeFromNode(30,tree.getRoot());
+        tree.removeFromNode(60,tree.getRoot());
+        Tree.Node root = tree.getRoot();
+        assertArrayEquals(root.keys, nodeRoot);
+        assertArrayEquals(root.children[0].keys, node0);
+        assertArrayEquals(root.children[1].keys, node1);
+        assertArrayEquals(root.children[0].children[0].keys, node2);
+        assertArrayEquals(root.children[0].children[1].keys, node3);
+        assertArrayEquals(root.children[1].children[0].keys, node4);
+        assertArrayEquals(root.children[1].children[1].keys, node5);
+        assertArrayEquals(root.children[1].children[2].keys, node6);
+    }
+
+    @Test
+    public void testRemove2() {
+        Tree tree = new Tree(7);
+        int[] list = {4, 11, 10, 2, 5, 6, 3, 98, 55, 34, 7, 1, 8, 9, 0, 42, 88, 101, 102, 59, 103, 33, 56, 65, 808,
+                666, 777, 66, 67, 12, 14, 16, 17, 19, 68, 909, 1001, 1002, 1003, 1004, 69, 1005, 1006, 1007, 1008, 1009,
+                1010, 1011, 1012, 1013, 1014, 1015, 1016, 1017, 1018, 1019, 1020, 1021, 1022, 70, 71, 72, 73, 74};
+        for (int element : list) {
+            tree.insert(element);
+        }
+        int[] node1 = {66, 70, 74, 103, 0, 0, 0};
+        int[] node2 = {71, 72, 73, 0, 0, 0, 0};
+        int[] node3 = {88, 98, 102, 0, 0, 0, 0};
+        Tree.Node root = tree.getRoot();
+        tree.removeFromNode(101, tree.getRoot());
+        assertArrayEquals(root.children[1].keys, node1);
+        assertArrayEquals(root.children[1].children[2].keys, node2);
+        assertArrayEquals(root.children[1].children[3].keys, node3);
+
+        tree.insert(89);
+        int[] node4 = {66, 70, 88, 103, 0, 0, 0};
+        int[] node5 = {71, 73, 74, 0, 0, 0, 0};
+        int[] node6 = {89, 98, 102, 0, 0, 0, 0};
+        tree.removeFromNode(72, tree.getRoot());
+        assertArrayEquals(root.children[1].keys, node4);
+        assertArrayEquals(root.children[1].children[2].keys, node5);
+        assertArrayEquals(root.children[1].children[3].keys, node6);
+
+        tree.insert(57);
+        int[] node7 = {65, 70, 88, 103, 0, 0, 0};
+        int[] node8 = {56, 57, 59, 0, 0, 0, 0};
+        int[] node9 = {66, 67, 68, 0, 0, 0, 0};
+        tree.removeFromNode(69, tree.getRoot());
+        assertArrayEquals(root.children[1].keys, node7);
+        assertArrayEquals(root.children[1].children[0].keys, node8);
+        assertArrayEquals(root.children[1].children[1].keys, node9);
+
+        tree.insert(901);
+        int[] node10 = {65, 70, 88, 666, 0, 0, 0};
+        int[] node11 = {89, 102, 103, 0, 0, 0, 0};
+        int[] node12 = {777, 808, 901, 0, 0, 0, 0};
+        tree.removeFromNode(98, tree.getRoot());
+        assertArrayEquals(root.children[1].keys, node10);
+        assertArrayEquals(root.children[1].children[3].keys, node11);
+        assertArrayEquals(root.children[1].children[4].keys, node12);
+
+        tree.insert(104);
+        int[] node13 = {65, 70, 88, 104, 0, 0, 0};
+        int[] node14 = {89, 102, 103, 0, 0, 0, 0};
+        int[] node15 = {666, 808, 901, 0, 0, 0, 0};
+        tree.removeFromNode(777, tree.getRoot());
+        assertArrayEquals(root.children[1].keys, node13);
+        assertArrayEquals(root.children[1].children[3].keys, node14);
+        assertArrayEquals(root.children[1].children[4].keys, node15);
+
+        tree.insert(69);
+        tree.insert(93);
+        int[] node16 = {65, 69, 88, 104, 0, 0, 0};
+        int[] node17 = {66, 67, 68, 0, 0, 0, 0};
+        int[] node18 = {70, 71, 74, 0, 0, 0, 0};
+        int[] node19 = {89, 93, 102, 103, 0, 0, 0};
+        tree.removeFromNode(73, tree.getRoot());
+        assertArrayEquals(root.children[1].keys, node16);
+        assertArrayEquals(root.children[1].children[1].keys, node17);
+        assertArrayEquals(root.children[1].children[2].keys, node18);
+        assertArrayEquals(root.children[1].children[3].keys, node19);
     }
 }

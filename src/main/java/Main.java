@@ -1,40 +1,13 @@
+
 public class Main {
     public static void main(String[] args) {
-        Tree tree = new Tree(4);
-        //for (int i = 0; i <= 35; i++) {
-        //  tree.insert(i);
-        //}
-        tree.insert(4);
-        tree.insert(11);
-        tree.insert(10);
-        tree.insert(2);
-        tree.insert(5);
-        tree.insert(6);
-        tree.insert(3);
-        tree.insert(98);
-        tree.insert(55);
-        tree.insert(34);
-        tree.insert(7);
-        tree.insert(1);
-        tree.insert(8);
-        tree.insert(9);
-        tree.insert(0);
-        tree.insert(42);
-        tree.insert(88);
-        tree.insert(101);
-        tree.insert(102);
-        tree.insert(59);
-        tree.insert(76);
-        tree.insert(33);
-        tree.insert(56);
-        tree.insert(65);
-        tree.insert(808);
-        tree.insert(666);
-        tree.insert(777);
-        tree.insert(376);
-        tree.insert(616);
-        tree.insert(717);
-        tree.insert(316);
+        Tree tree = new Tree(5);
+        int[] array = {4, 11, 10, 2, 5, 6, 3, 98, 55, 34, 7, 1, 8, 9, 0, 42, 88, 101, 102, 59, 103, 33, 56, 65,
+                808, 666, 777, 66, 67, 12, 14, 16, 17, 19, 68, 909, 1001, 1002, 1003, 1004, 69, 15};
+        for (int number : array) {
+            tree.insert(number);
+        }
+        tree.removeFromNode(17, tree.getRoot());
         tree.Show();
     }
 }
