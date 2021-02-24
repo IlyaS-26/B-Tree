@@ -1,5 +1,8 @@
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class Tests {
@@ -539,11 +542,194 @@ public class Tests {
     public void testRemove4() {
         Tree tree = new Tree(7);
         int[] array = {7, 2, 1, 4, 3, 8, 10, 25, 15, 13, 77, 34, 29, 9, 11, 50, 66, 49, 14, 87, 90, 99, 73, 72, 70,
-        21, 18, 100, 220, 222, 110, 125, 113, 177, 250, 277, 107, 102, 104, 299, 266, 234, 381, 450, 311, 308, 309,
-        404, 403, 402, 400, 333, 590, 509, 524, 612, 655, 800, 710, 704, 766, 629, 649, 699, 907, 929, 999, 1111,
-        16, 718, 898};
+                21, 18, 100, 220, 222, 110, 125, 113, 177, 250, 277, 107, 102, 104, 299, 266, 234, 381, 450, 311, 308, 309,
+                404, 403, 402, 400, 333, 590, 509, 524, 612, 655, 800, 710, 704, 766, 629, 649, 699, 907, 929, 999, 1111,
+                16, 718, 898};
         for (int number : array) {
             tree.insert(number);
         }
+        Tree.Node root = tree.getRoot();
+        int[] node0 = {102, 177, 250, 0, 0, 0, 0};
+        int[] node1 = {87, 90, 99, 0, 0, 0, 0};
+        int[] node2 = {104, 107, 110, 113, 125, 0, 0};
+        tree.removeFromNode(100, tree.getRoot());
+        assertArrayEquals(root.children[1].keys, node0);
+        assertArrayEquals(root.children[1].children[0].keys, node1);
+        assertArrayEquals(root.children[1].children[1].keys, node2);
+
+        tree.removeFromNode(250, tree.getRoot());
+        int[] node3 = {102, 125, 234, 0, 0, 0, 0};
+        int[] node4 = {104, 107, 110, 113, 0, 0, 0};
+        int[] node5 = {177, 220, 222, 0, 0, 0, 0};
+        assertArrayEquals(root.children[1].keys, node3);
+        assertArrayEquals(root.children[1].children[1].keys, node4);
+        assertArrayEquals(root.children[1].children[2].keys, node5);
+
+        tree.removeFromNode(125, tree.getRoot());
+        int[] node6 = {87, 90, 99, 0, 0, 0, 0};
+        int[] node7 = {102, 113, 234, 0, 0, 0, 0};
+        int[] node8 = {104, 107, 110, 0, 0, 0, 0};
+        int[] node9 = {177, 220, 222, 0, 0, 0, 0};
+        assertArrayEquals(root.children[1].keys, node7);
+        assertArrayEquals(root.children[1].children[0].keys, node6);
+        assertArrayEquals(root.children[1].children[1].keys, node8);
+        assertArrayEquals(root.children[1].children[2].keys, node9);
+
+        tree.removeFromNode(113, tree.getRoot());
+        int[] node10 = {34, 308, 0, 0, 0, 0, 0};
+        int[] node11 = {4, 13, 18, 0, 0, 0, 0};
+        int[] node12 = {77, 110, 234, 0, 0, 0, 0};
+        assertArrayEquals(root.keys, node10);
+        assertArrayEquals(root.children[0].keys, node11);
+        assertArrayEquals(root.children[1].keys, node12);
+
+        tree.insert(2222);
+        tree.removeFromNode(402, tree.getRoot());
+        int[] node13 = {400, 509, 655, 766, 929, 0, 0};
+        int[] node14 = {309, 311, 333, 381, 0, 0, 0};
+        assertArrayEquals(root.children[2].keys, node13);
+        assertArrayEquals(root.children[2].children[0].keys, node14);
+
+        tree.removeFromNode(929, tree.getRoot());
+        int[] node15 = {400, 509, 655, 718, 907, 0, 0};
+        int[] node16 = {699, 704, 710, 0, 0, 0, 0};
+        int[] node17 = {766, 800, 898, 0, 0, 0, 0};
+        assertArrayEquals(root.children[2].keys, node15);
+        assertArrayEquals(root.children[2].children[3].keys, node16);
+        assertArrayEquals(root.children[2].children[4].keys, node17);
+
+        tree.removeFromNode(655, tree.getRoot());
+        int[] node18 = {400, 509, 649, 718, 907, 0, 0};
+        int[] node19 = {524, 590, 612, 629, 0, 0, 0};
+        assertArrayEquals(root.children[2].keys, node18);
+        assertArrayEquals(root.children[2].children[2].keys, node19);
+
+        tree.removeFromNode(509, tree.getRoot());
+        int[] node20 = {381, 450, 649, 718, 907, 0, 0};
+        int[] node21 = {309, 311, 333, 0, 0, 0, 0};
+        int[] node22 = {400, 403, 404, 0, 0, 0, 0};
+        assertArrayEquals(root.children[2].keys, node20);
+        assertArrayEquals(root.children[2].children[0].keys, node21);
+        assertArrayEquals(root.children[2].children[1].keys, node22);
+
+        tree.removeFromNode(718, tree.getRoot());
+        int[] node23 = {381, 450, 629, 710, 907, 0, 0};
+        int[] node24 = {524, 590, 612, 0, 0, 0, 0};
+        int[] node25 = {649, 699, 704, 0, 0, 0, 0};
+        assertArrayEquals(root.children[2].keys, node23);
+        assertArrayEquals(root.children[2].children[2].keys, node24);
+        assertArrayEquals(root.children[2].children[3].keys, node25);
+
+        tree.removeFromNode(629, tree.getRoot());
+        int[] node26 = {381, 612, 710, 907, 0, 0, 0};
+        int[] node27 = {309, 311, 333, 0, 0, 0, 0};
+        int[] node28 = {400, 403, 404, 450, 524, 590, 0};
+        assertArrayEquals(root.children[2].keys, node26);
+        assertArrayEquals(root.children[2].children[0].keys, node27);
+        assertArrayEquals(root.children[2].children[1].keys, node28);
+
+        tree.removeFromNode(102, tree.getRoot());
+        tree.removeFromNode(107, tree.getRoot());
+        tree.removeFromNode(87, tree.getRoot());
+        tree.removeFromNode(99, tree.getRoot());
+        tree.removeFromNode(73, tree.getRoot());
+        tree.removeFromNode(49, tree.getRoot());
+        tree.removeFromNode(70, tree.getRoot());
+        tree.removeFromNode(110, tree.getRoot());
+        tree.removeFromNode(90, tree.getRoot());
+        tree.removeFromNode(77, tree.getRoot());
+        tree.removeFromNode(234, tree.getRoot());
+        int[] node29 = {381, 0, 0, 0, 0, 0, 0};
+        int[] node30 = {4, 13, 18, 34, 222, 308, 0};
+        int[] node31 = {612, 710, 907, 0, 0, 0, 0};
+        assertArrayEquals(root.keys, node29);
+        assertArrayEquals(root.children[0].keys, node30);
+        assertArrayEquals(root.children[1].keys, node31);
+
+        tree.removeFromNode(13, tree.getRoot());
+        tree.removeFromNode(222, tree.getRoot());
+        tree.removeFromNode(308, tree.getRoot());
+        tree.removeFromNode(11, tree.getRoot());
+        tree.removeFromNode(18, tree.getRoot());
+        tree.removeFromNode(4, tree.getRoot());
+        tree.removeFromNode(299, tree.getRoot());
+        int[] node32 = {7, 16, 34, 104, 277, 0, 0};
+        int[] node33 = {612, 710, 907, 0, 0, 0, 0};
+        assertArrayEquals(root.children[0].keys, node32);
+        assertArrayEquals(root.children[1].keys, node33);
+
+        tree.removeFromNode(381, tree.getRoot());
+        int[] node34 = {333, 0, 0, 0, 0, 0, 0};
+        int[] node35 = {7, 16, 34, 104, 0, 0, 0};
+        int[] node36 = {177, 220, 266, 277, 309, 311, 0};
+        assertArrayEquals(root.keys, node34);
+        assertArrayEquals(root.children[0].keys, node35);
+        assertArrayEquals(root.children[0].children[4].keys, node36);
+
+        tree.removeFromNode(333, tree.getRoot());
+        tree.removeFromNode(311, tree.getRoot());
+        tree.removeFromNode(309, tree.getRoot());
+        tree.removeFromNode(277, tree.getRoot());
+        tree.removeFromNode(266, tree.getRoot());
+        tree.removeFromNode(220, tree.getRoot());
+        tree.removeFromNode(177, tree.getRoot());
+        tree.removeFromNode(104, tree.getRoot());
+        int[] node37 = {7, 16, 72, 612, 710, 907, 0};
+        int[] node38 = {1, 2, 3, 0, 0, 0, 0};
+        int[] node39 = {8, 9, 10, 14, 15, 0, 0};
+        int[] node40 = {21, 25, 29, 34, 50, 66, 0};
+        int[] node41 = {400, 403, 404, 450, 524, 590, 0};
+        int[] node42 = {649, 699, 704, 0, 0, 0, 0};
+        int[] node43 = {766, 800, 898, 0, 0, 0, 0};
+        int[] node44 = {999, 1111, 2222, 0, 0, 0, 0};
+        assertArrayEquals(tree.getRoot().keys, node37);
+        assertArrayEquals(tree.getRoot().children[0].keys, node38);
+        assertArrayEquals(tree.getRoot().children[1].keys, node39);
+        assertArrayEquals(tree.getRoot().children[2].keys, node40);
+        assertArrayEquals(tree.getRoot().children[3].keys, node41);
+        assertArrayEquals(tree.getRoot().children[4].keys, node42);
+        assertArrayEquals(tree.getRoot().children[5].keys, node43);
+        assertArrayEquals(tree.getRoot().children[6].keys, node44);
+    }
+
+    @Test
+    public void iterator1() {
+        Tree tree = new Tree(5);
+        int[] iteratorArray = new int[17];
+        int[] array = {4, 11, 10, 2, 5, 6, 3, 98, 55, 34, 7, 1, 8, 9, 0, 42, 88};
+        for (int number : array) {
+            tree.insert(number);
+        }
+        Iterator iterator = tree.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Integer a = (Integer) iterator.next();
+            iteratorArray[index] = a;
+            index++;
+        }
+        Arrays.sort(array);
+        assertArrayEquals(iteratorArray, array);
+    }
+
+    @Test
+    public void iterator2() {
+        Tree tree = new Tree(7);
+        int[] iteratorArray = new int[71];
+        int[] array = {7, 2, 1, 4, 3, 8, 10, 25, 15, 13, 77, 34, 29, 9, 11, 50, 66, 49, 14, 87, 90, 99, 73, 72, 70,
+                21, 18, 100, 220, 222, 110, 125, 113, 177, 250, 277, 107, 102, 104, 299, 266, 234, 381, 450, 311, 308, 309,
+                404, 403, 402, 400, 333, 590, 509, 524, 612, 655, 800, 710, 704, 766, 629, 649, 699, 907, 929, 999, 1111,
+                16, 718, 898};
+        for (int number : array) {
+            tree.insert(number);
+        }
+        Iterator iterator = tree.iterator();
+        int index = 0;
+        while (iterator.hasNext()) {
+            Integer a = (Integer) iterator.next();
+            iteratorArray[index] = a;
+            index++;
+        }
+        Arrays.sort(array);
+        assertArrayEquals(iteratorArray, array);
     }
 }

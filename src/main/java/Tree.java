@@ -1,3 +1,6 @@
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Stack;
 
 public class Tree {
     private final int T;
@@ -94,46 +97,12 @@ public class Tree {
         }
     }
 
-    public void Show() {
-        Show(root);
-    }
-
-    private void Show(Node x) {
-        assert (x == null);
-        for (int i = 0; i < x.n; i++) {
-            System.out.print(x.keys[i] + " ");
-        }
-        System.out.print(" ");
-        if (!x.isLeaf) {
-            for (int i = 0; i < x.n + 1; i++) {
-                Show(x.children[i]);
-            }
-        }
-    }
-
     private int findKey(int value, Node node) {
         int ans = 0;
         while (ans < node.n && node.keys[ans] < value) {
             ans = ans + 1;
         }
         return ans;
-    }
-
-    public boolean removeFromTree(int value, Tree tree) {
-        if (tree.root.n == 0) {
-            System.out.println("Tree doesn't exist");
-            return false;
-        }
-        removeFromNode(value, tree.root);
-        if (tree.root.n == 0) {
-            Node tmp = tree.root;
-            if (tree.root.isLeaf) {
-                tree.root = null;
-            } else {
-                tree.root = tree.root.children[0];
-            }
-        }
-        return false;
     }
 
     public void removeFromNode(int value, Node node) {
@@ -164,10 +133,11 @@ public class Tree {
         node.n = node.n - 1;
     }
 
-    private boolean removeFromNonLeaf(int i, Node node) {
+    private void removeFromNonLeaf(int i, Node node) {
         int k = node.keys[i];
-        if (node.children[i].n > T / 2) {
+        if (node.children[i].n >= T / 2) {
             int pred = getPred(i, node);
+            node.keys[i] = pred;
             removeFromNode(pred, node.children[i]);
         } else if (node.children[i + 1].n >= T / 2) {
             int succ = getSucc(i, node);
@@ -177,7 +147,6 @@ public class Tree {
             merge(i, node);
             removeFromNode(k, node.children[i]);
         }
-        return false;
     }
 
     private int getPred(int i, Node node) {
@@ -244,7 +213,7 @@ public class Tree {
             sibling.keys[j - 1] = sibling.keys[j];
         }
         if (!sibling.isLeaf) {
-            for (int j = 1; j <= sibling.n; j++) {
+            for (int j = 1; j <= sibling.n + 1; j++) {
                 sibling.children[j - 1] = sibling.children[j];
             }
         }
@@ -257,7 +226,7 @@ public class Tree {
         Node sibling = node.children[i + 1];
         if (!child.isLeaf) {
             for (int j = 0; j <= sibling.n; j++) {
-                child.children[j + child.n + 1] = sibling.children[j];//
+                child.children[j + child.n + 1] = sibling.children[j];
             }
         }
         if (child.n < T / 2) {
@@ -283,5 +252,77 @@ public class Tree {
             }
         }
         node.n = node.n - 1;
+    }
+
+    public boolean search(Node node, int value) {
+        int i = 0;
+        while ((i <= node.n - 1) && (value > node.keys[i])) {
+            i++;
+        }
+        if ((i <= node.n - 1) && (value == node.keys[i])) {
+            System.out.println("Значение " + value + " было найдено");
+            return true;
+        }
+        if (node.isLeaf) {
+            System.out.println("Значение " + value + " не было найдено");
+            return false;
+        } else return search(node.children[i], value);
+    }
+
+    public Iterator iterator() {
+        return new BTreeIterator();
+    }
+
+    private class BTreeIterator implements Iterator {
+
+        private final Stack<Node> nodeStack;
+        private final Stack<Integer> indexStack;
+
+        public BTreeIterator() {
+            nodeStack = new Stack<>();
+            indexStack = new Stack<>();
+            if (root.n > 0) {
+                pushLeftPath(root);
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !nodeStack.empty();
+        }
+
+        @Override
+        public Object next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            Node node = nodeStack.peek();
+            int index = indexStack.pop();
+            Object result = node.keys[index];
+            index++;
+            if (index < node.n) {
+                indexStack.push(index);
+            } else {
+                nodeStack.pop();
+            }
+            if (!node.isLeaf) {
+                pushLeftPath(node.children[index]);
+            }
+            return result;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        private void pushLeftPath(Node node) {
+            while (true) {
+                nodeStack.push(node);
+                indexStack.push(0);
+                if (node.isLeaf) {
+                    break;
+                }
+                node = node.children[0];
+            }
+        }
     }
 }
