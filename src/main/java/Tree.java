@@ -314,10 +314,10 @@ public class Tree {
             int index = indexStack.pop();
             Object result = node.keys[index];
             index++;
-            if (index < node.n) { // пока не станет равным кол-ву ключей в node добалвяем увеличенный на 1 индекс
+            if (index < node.n) {
                 indexStack.push(index);
             } else {
-                nodeStack.pop(); // иначе удаляем узел
+                nodeStack.pop(); 
             }
             if (!node.isLeaf) {
                 pushLeftPath(node.children[index]);
