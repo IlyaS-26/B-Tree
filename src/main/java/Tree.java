@@ -162,9 +162,6 @@ public class Tree {
             int succ = getSucc(i, node);
             node.keys[i] = succ;
             removeFromNode(succ, node.children[i + 1]);
-        } else {
-            merge(i, node);
-            removeFromNode(k, node.children[i]);
         }
     }
 
@@ -314,10 +311,10 @@ public class Tree {
             int index = indexStack.pop();
             Object result = node.keys[index];
             index++;
-            if (index < node.n) {
+            if (index < node.n) { // пока не станет равным кол-ву ключей в node добалвяем увеличенный на 1 индекс
                 indexStack.push(index);
             } else {
-                nodeStack.pop(); 
+                nodeStack.pop(); // иначе удаляем узел
             }
             if (!node.isLeaf) {
                 pushLeftPath(node.children[index]);
