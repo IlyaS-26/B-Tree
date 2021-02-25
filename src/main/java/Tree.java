@@ -83,14 +83,14 @@ public class Tree {
             x.children[j + 1] = x.children[j];
         }
         x.children[i + 1] = z;
-        for (int j = x.n - 1; j >= i; j--) {
+        for (int j = x.n - 1; j >= i; j--) { // нахождение места для медианы если в x больше одного ключа
             x.keys[j + 1] = x.keys[j];
         } //Медиана в x
         x.keys[i] = y.keys[minimumT];
         y.keys[minimumT] = 0;
         y.n--;
         x.n = x.n + 1;
-        if (!y.isLeaf) {
+        if (!y.isLeaf) { // передача детей если образуется новый корень
             if (T % 2 != 0) {
                 for (int j = T / 2 + 1; j <= T; j++) {
                     z.children[-(T / 2 + 1) + j] = y.children[j];
@@ -174,7 +174,7 @@ public class Tree {
         while (!cur.isLeaf) {
             cur = cur.children[cur.n];
         }
-        return cur.keys[cur.n - 1];
+        return cur.keys[cur.n - 1]; // возвращаем последнее значение в узле
     }
 
     private int getSucc(int i, Node node) {
@@ -182,11 +182,11 @@ public class Tree {
         while (!cur.isLeaf) {
             cur = cur.children[0];
         }
-        return cur.keys[0];
+        return cur.keys[0]; // возвращаем первое значение в узле
     }
 
     private void fill(int i, Node node) {
-        if (i != 0 && node.children[i - 1].n > minimumT) {
+        if (i != 0 && node.children[i - 1].n > minimumT) { // если тот что слева имеет > minimumT
             borrowFromPrev(i, node);
         } else if (i != node.n && node.children[i + 1].n > minimumT) {
             borrowFromNext(i, node);
@@ -200,18 +200,18 @@ public class Tree {
     }
 
     private void borrowFromPrev(int i, Node node) {
-        Node child = node.children[i];
-        Node sibling = node.children[i - 1];
-        for (int j = child.n - 1; j >= 0; j--) {
+        Node child = node.children[i]; // из которого только что удалили
+        Node sibling = node.children[i - 1]; // брат слева
+        for (int j = child.n - 1; j >= 0; j--) { // освобождение места для вставки
             child.keys[j + 1] = child.keys[j];
         }
-        if (!child.isLeaf) {
+        if (!child.isLeaf) { // добавление нового места
             for (int j = child.n; j >= 0; j--) {
                 child.children[j + 1] = child.children[j];
             }
         }
         child.keys[0] = node.keys[i - 1];
-        if (!child.isLeaf) {
+        if (!child.isLeaf) { // добавление в child последнего ребенка sibling
             child.children[0] = sibling.children[sibling.n];
             sibling.children[sibling.n] = null;
         }
@@ -222,14 +222,14 @@ public class Tree {
     }
 
     private void borrowFromNext(int i, Node node) {
-        Node child = node.children[i];
-        Node sibling = node.children[i + 1];
-        child.keys[child.n] = node.keys[i];
+        Node child = node.children[i]; // из которого только что удалили
+        Node sibling = node.children[i + 1]; // брат справа
+        child.keys[child.n] = node.keys[i]; // добавляем в конец ключ из верхнего узла который указывает на нас
         if (!child.isLeaf) {
             child.children[child.n + 1] = sibling.children[0];
         }
-        node.keys[i] = sibling.keys[0];
-        for (int j = 1; j <= sibling.n; j++) {
+        node.keys[i] = sibling.keys[0]; // заменяем указатель на новый, равный первому ключу правого брата
+        for (int j = 1; j <= sibling.n; j++) { // сдвигаем влево
             sibling.keys[j - 1] = sibling.keys[j];
         }
         if (!sibling.isLeaf) {
@@ -244,32 +244,28 @@ public class Tree {
     private void merge(int i, Node node) {
         Node child = node.children[i];
         Node sibling = node.children[i + 1];
-        if (!child.isLeaf) {
+        if (!child.isLeaf) { // добалвение детей узла справа
             for (int j = 0; j <= sibling.n; j++) {
                 child.children[j + child.n + 1] = sibling.children[j];
             }
         }
-        if (child.n < minimumT) {
-            child.keys[(minimumT) - 1] = node.keys[i];
-            for (int j = 0; j <= sibling.n; j++) {
+        if (child.n < minimumT) { // выбор с какого индекса начать вставлять
+            child.keys[(minimumT) - 1] = node.keys[i]; // добавляем в узел i-ый ключ из верхнего узла
+            for (int j = 0; j <= sibling.n; j++) { // добавляем оставшиеся ключи из правого брата
                 child.keys[j + minimumT] = sibling.keys[j];
             }
         } else {
-            child.keys[minimumT] = node.keys[i];
-            for (int j = 1; j <= sibling.n; j++) {
+            child.keys[minimumT] = node.keys[i]; // добавляем в конец ключ из верхнего узла
+            for (int j = 1; j <= sibling.n; j++) { // добавление в сливаемый оставшихся от другого узла ключей
                 child.keys[j + minimumT] = sibling.keys[j - 1];
             }
         }
-        for (int j = i + 1; j <= node.n; j++) {
+        for (int j = i + 1; j <= node.n; j++) { // удаление из верхнего узла ушедшего ключа
             node.keys[j - 1] = node.keys[j];
         }
         child.n = child.n + sibling.n + 1;
-        for (int j = i + 1; j <= node.n; j++) {
-            if (node.children[i + 2] != null) {
-                node.children[j] = node.children[j + 1];
-            } else {
-                node.children[i + 1] = null;
-            }
+        for (int j = i + 1; j <= node.n; j++) { // смещение с удалением детей начиная с удаляемого узла
+            node.children[j] = node.children[j + 1];
         }
         node.n = node.n - 1;
     }
@@ -319,10 +315,10 @@ public class Tree {
             int index = indexStack.pop();
             Object result = node.keys[index];
             index++;
-            if (index < node.n) {
+            if (index < node.n) { // пока не станет равным кол-ву ключей в node добалвяем увеличенный на 1 индекс
                 indexStack.push(index);
             } else {
-                nodeStack.pop();
+                nodeStack.pop(); // иначе удаляем узел
             }
             if (!node.isLeaf) {
                 pushLeftPath(node.children[index]);

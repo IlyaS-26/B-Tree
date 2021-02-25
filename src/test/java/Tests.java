@@ -78,7 +78,7 @@ public class Tests {
         int[] node3 = {15, 0, 0};
         int[] node4 = {25, 0, 0};
         int[] node5 = {50, 80, 0};
-        int [] array = {4, 11, 10, 12, 14, 15, 17, 20, 22, 25, 30, 35, 40, 50, 60, 80, 90, 100};
+        int[] array = {4, 11, 10, 12, 14, 15, 17, 20, 22, 25, 30, 35, 40, 50, 60, 80, 90, 100};
         for (int number : array) {
             tree.insert(number);
         }
