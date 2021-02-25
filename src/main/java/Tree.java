@@ -5,12 +5,18 @@ import java.util.Stack;
 public class Tree {
     private final int T;
     private Node root;
+    private final int minimumT;
 
     public Tree(int t) {
         T = t;
         this.root = new Node();
         root.n = 0;
         root.isLeaf = true;
+        if (T % 2 != 0) {
+            minimumT = T / 2;
+        } else {
+            minimumT = (T / 2) - 1;
+        }
     }
 
     public class Node {
@@ -25,11 +31,10 @@ public class Tree {
     }
 
     public void insert(int k) {
-        Node r = root;
-        insertValue(r, k);
+        insertValue(root, k);
     }
 
-    private void insertValue(Node x, int k) { // x - нод, k - новый ключ
+    private void insertValue(Node x, int k) {
         int i = x.n;
         if (x.isLeaf) {
             while ((i >= 1) && (k < x.keys[i - 1])) {
@@ -62,14 +67,15 @@ public class Tree {
         Node z = new Node();
         int removed = 0;
         z.isLeaf = y.isLeaf;
-        if (T % 2 == 0) {
-            z.n = T / 2 - 1;
-        } else {
-            z.n = T / 2;
-        }
+        z.n = T / 2; // кол-во ключей идущих в новый узел z
         for (int j = 0; j < z.n; j++) {
-            z.keys[j] = y.keys[j + z.n + 1];
-            y.keys[j + z.n + 1] = 0;
+            if (T % 2 != 0) {
+                z.keys[j] = y.keys[j + z.n + 1];
+                y.keys[j + z.n + 1] = 0;
+            } else {
+                z.keys[j] = y.keys[j + z.n];
+                y.keys[j + z.n] = 0;
+            }
             removed++;
         }
         y.n = T - removed; //обновление колличества ключей в y
@@ -80,19 +86,21 @@ public class Tree {
         for (int j = x.n - 1; j >= i; j--) {
             x.keys[j + 1] = x.keys[j];
         } //Медиана в x
-        if (T % 2 == 0) {
-            x.keys[i] = y.keys[T / 2 + 1];
-            y.keys[T / 2 + 1] = 0;
-        } else {
-            x.keys[i] = y.keys[T / 2];
-            y.keys[T / 2] = 0;
-        }
+        x.keys[i] = y.keys[minimumT];
+        y.keys[minimumT] = 0;
         y.n--;
         x.n = x.n + 1;
         if (!y.isLeaf) {
-            for (int j = T / 2 + 1; j <= T; j++) {
-                z.children[-(T / 2 + 1) + j] = y.children[j];
-                y.children[j] = null;
+            if (T % 2 != 0) {
+                for (int j = T / 2 + 1; j <= T; j++) {
+                    z.children[-(T / 2 + 1) + j] = y.children[j];
+                    y.children[j] = null;
+                }
+            } else {
+                for (int j = T / 2 + 1; j <= T + 1; j++) {
+                    z.children[-(T / 2 + 1) + j] = y.children[j - 1];
+                    y.children[j - 1] = null;
+                }
             }
         }
     }
@@ -102,12 +110,23 @@ public class Tree {
         while (ans < node.n && node.keys[ans] < value) {
             ans = ans + 1;
         }
+        if (node.isLeaf && node.keys[ans] != value) {
+            return -1;
+        }
         return ans;
     }
 
-    public void removeFromNode(int value, Node node) {
+    public void remove(int value) {
+        removeFromNode(value, root);
+    }
+
+    public boolean removeFromNode(int value, Node node) {
         int i = findKey(value, node);
-        if (i < node.n && node.keys[i] == value) { // i меньше кол-ва ключей в node и value равно значению под индексом
+        if (i == -1) {
+            System.out.println("Число " + value + " отсутствует в дереве");
+            return false;
+        }
+        if (i < node.n && node.keys[i] == value) {
             if (node.isLeaf) {
                 removeFromLeaf(i, node);
             } else {
@@ -120,10 +139,11 @@ public class Tree {
                 removeFromNode(value, node.children[i]);
             }
         }
-        if (!node.isLeaf && node.children[i].n < T / 2) {
+        if (!node.isLeaf && node.children[i].n < minimumT) {
             fill(i, node);
-            if (node.n == 0) root = node.children[i];
+            if (node.n == 0) root = node.children[0];
         }
+        return true;
     }
 
     private void removeFromLeaf(int i, Node node) {
@@ -135,11 +155,11 @@ public class Tree {
 
     private void removeFromNonLeaf(int i, Node node) {
         int k = node.keys[i];
-        if (node.children[i].n >= T / 2) {
+        if (node.children[i].n >= minimumT) {
             int pred = getPred(i, node);
             node.keys[i] = pred;
             removeFromNode(pred, node.children[i]);
-        } else if (node.children[i + 1].n >= T / 2) {
+        } else if (node.children[i + 1].n >= minimumT) {
             int succ = getSucc(i, node);
             node.keys[i] = succ;
             removeFromNode(succ, node.children[i + 1]);
@@ -166,9 +186,9 @@ public class Tree {
     }
 
     private void fill(int i, Node node) {
-        if (i != 0 && node.children[i - 1].n > T / 2) {
+        if (i != 0 && node.children[i - 1].n > minimumT) {
             borrowFromPrev(i, node);
-        } else if (i != node.n && node.children[i + 1].n > T / 2) {
+        } else if (i != node.n && node.children[i + 1].n > minimumT) {
             borrowFromNext(i, node);
         } else {
             if (i == node.n || i >= 1) {
@@ -229,15 +249,15 @@ public class Tree {
                 child.children[j + child.n + 1] = sibling.children[j];
             }
         }
-        if (child.n < T / 2) {
-            child.keys[(T / 2) - 1] = node.keys[i];
+        if (child.n < minimumT) {
+            child.keys[(minimumT) - 1] = node.keys[i];
             for (int j = 0; j <= sibling.n; j++) {
-                child.keys[j + T / 2] = sibling.keys[j];
+                child.keys[j + minimumT] = sibling.keys[j];
             }
         } else {
-            child.keys[T / 2] = node.keys[i];
+            child.keys[minimumT] = node.keys[i];
             for (int j = 1; j <= sibling.n; j++) {
-                child.keys[j + T / 2] = sibling.keys[j - 1];
+                child.keys[j + minimumT] = sibling.keys[j - 1];
             }
         }
         for (int j = i + 1; j <= node.n; j++) {
@@ -254,19 +274,20 @@ public class Tree {
         node.n = node.n - 1;
     }
 
-    public boolean search(Node node, int value) {
-        int i = 0;
-        while ((i <= node.n - 1) && (value > node.keys[i])) {
-            i++;
+    public void search(int value) {
+        searchFormNode(root, value);
+    }
+
+    private boolean searchFormNode(Node node, int value) {
+        int i = findKey(value, node);
+        if (node.isLeaf && i == -1) {
+            System.out.println("Значение " + value + " не было найдено");
+            return false;
         }
         if ((i <= node.n - 1) && (value == node.keys[i])) {
             System.out.println("Значение " + value + " было найдено");
             return true;
-        }
-        if (node.isLeaf) {
-            System.out.println("Значение " + value + " не было найдено");
-            return false;
-        } else return search(node.children[i], value);
+        } else return searchFormNode(node.children[i], value);
     }
 
     public Iterator iterator() {

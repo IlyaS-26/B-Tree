@@ -9,9 +9,11 @@ public class Main {
         }
         Iterator iterator = tree.iterator();
         while (iterator.hasNext()) {
-            Integer a = (Integer) iterator.next();
-            System.out.println(a);
+            System.out.println(iterator.next());
         }
-        tree.search(tree.getRoot(), 99);
+        tree.remove(88);
+        tree.remove(88);
+        tree.search(88);
+        tree.search(98);
     }
 }
