@@ -120,11 +120,11 @@ public class Tree {
         removeFromNode(value, root);
     }
 
-    public boolean removeFromNode(int value, Node node) {
+    public void removeFromNode(int value, Node node) {
         int i = findKey(value, node);
         if (i == -1) {
             System.out.println("Число " + value + " отсутствует в дереве");
-            return false;
+            return;
         }
         if (i < node.n && node.keys[i] == value) {
             if (node.isLeaf) {
@@ -143,7 +143,6 @@ public class Tree {
             fill(i, node);
             if (node.n == 0) root = node.children[0];
         }
-        return true;
     }
 
     private void removeFromLeaf(int i, Node node) {
